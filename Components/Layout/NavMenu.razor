@@ -1,0 +1,33 @@
+﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand fw-bold text-uppercase text-light" href="/">BookStore</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Перемкнути навігацію">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <NavLink class="btn btn-outline-light catalog-btn" href="catalog">
+                    <i class="bi bi-book me-1"></i> Каталог книг
+                </NavLink>
+            </li>
+        </ul>
+
+        <!-- Поле пошуку -->
+        <form class="d-flex me-auto ms-3">
+            <input class="form-control search-box" type="search" placeholder="Пошук книг..." aria-label="Search">
+            <button class="btn btn-outline-light ms-2" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+
+        <!-- Вхід / Реєстрація -->
+        <div class="auth-links ms-auto">
+            <NavLink href="/login" class="nav-link d-inline text-light">Вхід</NavLink>
+            <span class="text-light"> / </span>
+            <NavLink href="/register" class="nav-link d-inline text-light">Реєстрація</NavLink>
+        </div>
+    </div>
+</nav>

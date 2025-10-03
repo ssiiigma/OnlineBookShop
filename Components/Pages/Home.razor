@@ -1,0 +1,55 @@
+﻿@*@page "/login"
+@inject NavigationManager Navigation
+
+<div class="auth-page">
+    <div class="auth-box">
+        <h2>Вхід у акаунт</h2>
+
+        <input type="text" placeholder="Електронна пошта" class="input-field" />
+        <input type="password" placeholder="Пароль" class="input-field" />
+
+        <button class="btn-auth" @onclick="LoginUser">Увійти</button>
+
+        <p class="redirect-text">
+            Немає акаунту? <a href="/register">Зареєструватися</a>
+        </p>
+    </div>
+</div>
+
+@code {
+    private void LoginUser()
+    {
+        Navigation.NavigateTo("/", true); // перекидає на головну
+    }
+}*@
+
+
+
+
+
+@*@page "/register"
+@inject NavigationManager Nav
+
+<div class="auth-box" align="center" >
+    <h3>Реєстрація</h3>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Ім’я"  />
+    </div>
+    <div class="mb-3">
+        <input type="email" class="form-control" placeholder="Електронна пошта" />
+    </div>
+    <div class="mb-3">
+        <input type="password" class="form-control" placeholder="Пароль" />
+    </div>
+
+    <button class="btn btn-primary w-100 btn-auth" @onclick="OnRegister">Зареєструватися</button>
+
+    <p class="mt-3 text-center muted">
+        Вже маєте акаунт? <a href="/login">Увійти</a>
+    </p>
+</div>
+
+@code {
+    private void OnRegister() => Nav.NavigateTo("/", true);
+}*@

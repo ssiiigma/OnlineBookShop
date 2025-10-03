@@ -1,0 +1,12 @@
+﻿@using OnlineBookShop.Components.Pages.Models
+@code {
+    [Parameter]
+    public List<Book> Books { get; set; } = new();
+}
+
+<div class="d-flex overflow-auto gap-3 mb-4">
+    @foreach (var book in Books)
+    {
+        <BookCard Book="book" />
+    }
+</div>

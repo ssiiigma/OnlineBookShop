@@ -1,0 +1,221 @@
+﻿@page "/catalog"
+@using OnlineBookShop.Components.Pages.Models
+@inject NavigationManager Navigation
+@inject StoreDbContext Db
+
+
+<link href="lib/bootstrap/dist/css/Catalog.css" rel="stylesheet"/>
+
+
+@if (SelectedBook != null)
+{
+    <div class="modal-overlay" @onclick="CloseByOverlay">
+        <div class="custom-modal" @onclick:stopPropagation>
+            <!-- Верхній ряд: стрілка назад -->
+            <div class="modal-top">
+                <button class="back-btn" @onclick="OnBackClicked" title="Повернутися">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+            </div>
+
+            <div class="modal-body row gx-4">
+                <!-- Обкладинка -->
+                <div class="col-md-4 image-box">
+                    <img src="@((object)$"/images/{SelectedBook.CoverImage}")" alt="@SelectedBook.Title" />
+                </div>
+
+                <!-- Інформація праворуч -->
+                <div class="col-md-8 info-box">
+                    <div class="d-flex align-items-start mb-2">
+                        <h2 class="mb-1">@SelectedBook.Title</h2>
+                        <button class="btn btn-link heart-btn ms-3" @onclick="ToggleFavorite" title="Додати в обране">
+                            <i class="@((isFavorite) ? "bi bi-heart-fill" : "bi bi-heart")"></i>
+                        </button>
+                    </div>
+
+                    <p><strong>Автор:</strong> @SelectedBook.Author</p>
+                    <p><strong>Ціна:</strong> @SelectedBook.Price грн</p>
+
+                    <div class="mt-3 description-block">
+                        <p><strong>Опис:</strong></p>
+                        <p>@SelectedBook.Description</p>
+                    </div>
+
+                    <div class="d-flex mt-4 align-items-center">
+                        <input class="form-control me-3 review-input" placeholder="Написати відгук..." @bind="newReview" />
+                        <button class="btn btn-success add-cart-btn" @onclick="AddToCart">Додати в кошик</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@code {
+    [Parameter] public Book? SelectedBook { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }    // викликається при закритті модалки
+    private List<Book>? _books;
+    
+    private bool isFavorite = false;
+    private string newReview = "";
+    
+    protected override void OnInitialized()
+    {
+        _books = Db.Books.ToList();
+    }
+
+
+    private async Task OnBackClicked()
+    {
+        // РЕКОМЕНДАЦІЯ: закривати модалку через EventCallback (батьківський компонент видалить SelectedBook)
+        if (OnClose.HasDelegate)
+        {
+            await OnClose.InvokeAsync(null);
+            return;
+        }
+
+        // Якщо OnClose не передали — як fallback можна перейти на сторінку (не обов'язково)
+        Navigation.NavigateTo("/catalog");
+    }
+
+    private async Task CloseByOverlay()
+    {
+        // клік по тлу закриває вікно
+        await OnBackClicked();
+    }
+
+    private void ToggleFavorite()
+    {
+        isFavorite = !isFavorite;
+        // тут можна викликати сервіс/запит для збереження обраного
+    }
+
+    private void AddToCart()
+    {
+        // додати логіку додавання в кошик
+    }
+}
+
+
+
+@*@page "/catalog"
+@inject HttpClient Http
+
+<h1 class="text-3xl font-bold mb-4">Каталог книг</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <select class="p-2 border rounded" @onchange="OnGenreChange">
+        <option value="">Усі жанри</option>
+        @foreach (var genre in _genres.Distinct())
+        {
+            <option value="@genre">@genre</option>
+        }
+    </select>
+    <select class="p-2 border rounded" @onchange="OnAuthorChange">
+        <option value="">Усі автори</option>
+        @foreach (var author in _authors.Distinct())
+        {
+            <option value="@author">@author</option>
+        }
+    </select>
+    <select class="p-2 border rounded" @onchange="OnPriceSortChange">
+        <option value="">Сортувати за</option>
+        <option value="asc">Ціною (зростання)</option>
+        <option value="desc">Ціною (спадання)</option>
+    </select>
+</div>
+
+@if (_books == null)
+{
+    <p>Завантаження книжок...</p>
+}
+else if (_books.Count == 0)
+{
+    <p>Не було знайдено книг за вашими фільтрами .</p>
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach (var book in _books)
+        {
+            <div class="border rounded p-4 shadow-md">
+                <h3 class="font-semibold text-xl mb-2">@book.Title</h3>
+                <p class="text-sm text-gray-700">Автор: @book.Author</p>
+                <p class="text-sm text-gray-700">Жанр: @book.Genre</p>
+                <p class="text-lg font-bold mt-2">@book.Price ₴</p>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<BookModel>? _books;
+    private List<string> _genres = new();
+    private List<string> _authors = new();
+    private string _selectedGenre = "";
+    private string _selectedAuthor = "";
+    private string _priceSort = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBooks();
+    }
+
+    private async Task LoadBooks()
+    {
+        var result = await Http.GetFromJsonAsync<List<BookModel>>("api/books");
+        if (result != null)
+        {
+            _books = result;
+            _genres = _books.Select(b => b.Genre).Distinct().ToList();
+            _authors = _books.Select(b => b.Author).Distinct().ToList();
+            ApplyFilters();
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        if (_books == null) return;
+
+        var filtered = _books.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(_selectedGenre))
+            filtered = filtered.Where(b => b.Genre == _selectedGenre);
+
+        if (!string.IsNullOrEmpty(_selectedAuthor))
+            filtered = filtered.Where(b => b.Author == _selectedAuthor);
+
+        if (_priceSort == "asc")
+            filtered = filtered.OrderBy(b => b.Price);
+        else if (_priceSort == "desc")
+            filtered = filtered.OrderByDescending(b => b.Price);
+
+        _books = filtered.ToList();
+    }
+
+    private void OnGenreChange(ChangeEventArgs e)
+    {
+        _selectedGenre = e.Value?.ToString() ?? "";
+        ApplyFilters();
+    }
+
+    private void OnAuthorChange(ChangeEventArgs e)
+    {
+        _selectedAuthor = e.Value?.ToString() ?? "";
+        ApplyFilters();
+    }
+
+    private void OnPriceSortChange(ChangeEventArgs e)
+    {
+        _priceSort = e.Value?.ToString() ?? "";
+        ApplyFilters();
+    }
+
+    public class BookModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = "";
+        public string Author { get; set; } = "";
+        public string Genre { get; set; } = "";
+        public decimal Price { get; set; }
+    }
+}*@

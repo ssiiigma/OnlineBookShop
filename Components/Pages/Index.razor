@@ -1,0 +1,178 @@
+﻿@page "/"
+
+<link href="lib/bootstrap/dist/css/Index.css" rel="stylesheet"/>
+
+<!-- Топ-10 книжок -->
+<div class="section-title">Топ-10 книжок 2025</div>
+<div class="book-carousel">
+    @foreach (var book in TopBooks)
+    {
+        <div class="book-card" @onclick="() => ShowBookDetails(book)">
+            <img src="@($"/images/{book.CoverImage}")" alt="@book.Title" />
+            <h4>@book.Title</h4>
+            <p>@book.Author</p>
+            <p>@book.Price грн</p>
+        </div>
+    }
+</div>
+
+<!-- Найкращі детективи -->
+<div class="section-title">Найкращі детективи</div>
+<div class="book-carousel">
+    @foreach (var book in DetectiveBooks)
+    {
+        <div class="book-card" @onclick="() => ShowBookDetails(book)">
+            <img src="@($"/images/{book.CoverImage}")" alt="@book.Title" />
+            <h4>@book.Title</h4>
+            <p>@book.Author</p>
+            <p>@book.Price грн</p>
+        </div>
+    }
+</div>
+
+<div class="section-title">Психологія</div>
+<div class="book-carousel">
+    @foreach (var book in PsycologyBooks)
+    {
+        <div class="book-card" @onclick="() => ShowBookDetails(book)">
+            <img src="@($"/images/{book.CoverImage}")" alt="@book.Title" />
+            <h4>@book.Title</h4>
+            <p>@book.Author</p>
+            <p>@book.Price грн</p>
+        </div>
+    }
+</div>
+
+<!-- Модальне вікно для деталей книги -->
+@if (selectedBook != null)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <span class="close" @onclick="CloseDetails">&times;</span>
+            <img src="@($"/images/{selectedBook.CoverImage}")" alt="@selectedBook.Title" />
+            <h2>@selectedBook.Title</h2>
+            <p><strong>Автор:</strong> @selectedBook.Author</p>
+            <p><strong>Ціна:</strong> @selectedBook.Price грн</p>
+            <p><strong>Опис:</strong> @selectedBook.Description</p>
+        </div>
+    </div>
+}
+
+@code {
+    private string searchQuery = "";
+    private Book selectedBook;
+
+    public class Book
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Author { get; set; }
+        public decimal Price { get; set; }
+        public string CoverImage { get; set; }
+        public string Description { get; set; }
+    }
+
+    List<Book> TopBooks = new()
+    {
+        new Book { Id = 1, Title = "Дім дивних дітей", Author = "Ренсом Ріггз", Price = 320, CoverImage = "book1.jpg", Description = "Захоплююча історія про дітей з особливими здібностями." },
+        new Book { Id = 2, Title = "Тінь вітру", Author = "Карлос Руїс Сафон", Price = 290, CoverImage = "book1.jpg", Description = "Історія таємничої книги, що змінює долі." },
+        new Book { Id = 3, Title = "Мистецтво війни", Author = "Сунь-Цзи", Price = 150, CoverImage = "book1.jpg", Description = "Класичний трактат про стратегію і тактику." }
+    };
+
+    List<Book> DetectiveBooks = new()
+    {
+        new Book { Id = 4, Title = "Шерлок Голмс", Author = "Артур Конан Дойл", Price = 270, CoverImage = "book1.jpg", Description = "Найвідоміші детективні історії світу." },
+        new Book { Id = 5, Title = "Десять негренят", Author = "Агата Крісті", Price = 230, CoverImage = "book1.jpg", Description = "Захоплюючий детектив із несподіваною розв'язкою." },
+        new Book { Id = 6, Title = "Дівчина у потягу", Author = "Пола Гоукінз", Price = 260, CoverImage = "book1.jpg", Description = "Трилер, що тримає в напрузі до останньої сторінки." }
+    };
+
+    
+    List<Book> PsycologyBooks = new()
+    {
+        new Book { Id = 4, Title = "Шерлок Голмс", Author = "Артур Конан Дойл", Price = 270, CoverImage = "book1.jpg", Description = "Найвідоміші детективні історії світу." },
+        new Book { Id = 5, Title = "Десять негренят", Author = "Агата Крісті", Price = 230, CoverImage = "book1.jpg", Description = "Захоплюючий детектив із несподіваною розв'язкою." },
+        new Book { Id = 6, Title = "Дівчина у потягу", Author = "Пола Гоукінз", Price = 260, CoverImage = "book1.jpg", Description = "Трилер, що тримає в напрузі до останньої сторінки." }
+    };
+
+    private void SearchBooks()
+    {
+        // Пошук реалізуємо пізніше (фільтрація)
+    }
+
+    private void ShowBookDetails(Book book)
+    {
+        selectedBook = book;
+    }
+
+    private void CloseDetails()
+    {
+        selectedBook = null;
+    }
+}
+
+
+
+@*@page "/"
+@inject HttpClient Http
+@using Components.Pages.Models
+@inject BookService BookService
+@inject NavigationManager Navigation
+
+<h1>Книжковий онлайн-магазин</h1>
+
+<input @bind="_searchTerm" @bind:event="oninput" class="form-control mb-4" placeholder="Пошук книги..." />
+
+@foreach (var book in FilteredBooks)
+{
+    <div class="book-card">
+        <img src="@book.ImageUrl" alt="@book.Title" class="book-cover" />
+        <h3>@book.Title</h3>
+        <p><strong>Автор:</strong> @book.Author</p>
+        <p><strong>Ціна:</strong> @book.Price ₴</p>
+    </div>
+}
+
+@if (FilteredBooks.Any())
+{
+    <h3>Результати пошуку:</h3>
+    <div class="row">
+        @foreach (var book in FilteredBooks)
+        {
+            <BookCard Book="book" />
+        }
+    </div>
+}
+else
+{
+    <h3>Топ-10 книг 2025</h3>
+    <BookCarousel Books="@BookService.GetTopBooks2025()" />
+
+    <h3>Кращі детективи</h3>
+    <BookCarousel Books="@BookService.GetBestDetectives()" />
+
+    <h3>Психологія</h3>
+    <BookCarousel Books="@BookService.GetPsychologyBooks()" />
+}
+
+@if (Navigation.Uri.Contains("registered=true"))
+{
+    <div class="alert alert-success">Вітаємо! Ви успішно зареєструвалися 🎉</div>
+}
+@if (Navigation.Uri.Contains("login=true"))
+{
+    <div class="alert alert-success">Ви успішно увійшли ✅</div>
+}
+
+@code {
+    private string _searchTerm = "";
+
+    private List<Book> FilteredBooks => string.IsNullOrWhiteSpace(_searchTerm)
+        ? new List<Book>()
+        : BookService.GetTopBooks2025()
+            .Concat(BookService.GetBestDetectives())
+            .Concat(BookService.GetPsychologyBooks())
+            .Where(b => b.Title.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)
+                        || b.Author.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase))
+            .Distinct()
+            .ToList();
+}*@

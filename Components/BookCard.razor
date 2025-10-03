@@ -1,0 +1,15 @@
+﻿@using OnlineBookShop.Components.Pages.Models
+@code {
+    [Parameter]
+    public required Book Book { get; set; }
+}
+
+<div class="card book-card">
+    <img src="~/images/book1.jpg" alt="Обкладинка книги" style="width: 150px; height: 200px" />
+
+    <div class="card-body">
+        <h5 class="card-titlel">@Book.Title</h5>
+        <p class="card-text">@Book.Author</p>
+        <p class="card-text">@Book.Price ₴</p>
+    </div>
+</div>

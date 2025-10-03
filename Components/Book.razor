@@ -1,0 +1,74 @@
+﻿@page "/books"
+@inject BookService BookService
+@namespace OnlineBookShop.Components.Pages.Models
+
+<h2>Каталог книг</h2>
+
+<div class="row mb-3">
+    <div class="col">
+        <input class="form-control" placeholder="Пошук..." @bind="_searchTerm" />
+    </div>
+    <div class="col">
+        <select class="form-select" @bind="_selectedGenre">
+            <option value="">Всі жанри</option>
+            @foreach (var genre in Genres)
+            {
+                <option>@genre</option>
+            }
+        </select>
+    </div>
+    <div class="col">
+        <select class="form-select" @bind="_selectedAuthor">
+            <option value="">Всі автори</option>
+            @foreach (var author in Authors)
+            {
+                <option>@author</option>
+            }
+        </select>
+    </div>
+    <div class="col">
+        <input type="number" class="form-control" placeholder="Макс. ціна" @bind="_maxPrice" />
+    </div>
+    <div class="col">
+        <button class="btn btn-primary w-100" @onclick="ApplyFilter">Застосувати</button>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var book in _filteredBooks)
+    {
+        <BookCard Book="book" />
+    }
+</div>
+
+@code {
+    private List<Book> _allBooks = new();
+    private string _searchTerm = "";
+    private string _selectedGenre = "";
+    private string _selectedAuthor = "";
+    private decimal _maxPrice = 0;
+
+    protected override void OnInitialized()
+    {
+        _allBooks = BookService.GetTopBooks2025()
+            .Concat(BookService.GetBestDetectives())
+            .Concat(BookService.GetPsychologyBooks())
+            .ToList();
+    }
+
+    private IEnumerable<string> Genres => _allBooks.Select(b => b.Genre).Distinct();
+    private IEnumerable<string> Authors => _allBooks.Select(b => b.Author).Distinct();
+
+    private List<Book> _filteredBooks = new();
+
+    private void ApplyFilter()
+    {
+        _filteredBooks = _allBooks
+            .Where(b =>
+                (string.IsNullOrWhiteSpace(_searchTerm) || b.Title.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(_selectedGenre) || b.Genre == _selectedGenre) &&
+                (string.IsNullOrWhiteSpace(_selectedAuthor) || b.Author == _selectedAuthor) &&
+                (_maxPrice == 0 || b.Price <= _maxPrice))
+            .ToList();
+    }
+}

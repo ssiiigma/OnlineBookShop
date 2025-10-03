@@ -1,0 +1,51 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+
+<link href="lib/bootstrap/dist/css/LoginPage.css" rel="stylesheet"/>
+
+<div class="d-flex justify-content-center align-items-center vh-100 overflow-hidden"
+     style="background: url('images/background/library_bg.jpg') no-repeat center center; background-size: cover;">
+    <div class="auth-box">
+        <h2>Вхід у акаунт</h2>
+
+        <EditForm Model="@loginModel" OnValidSubmit="@LoginUser">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <InputText class="input-field" placeholder="Електронна пошта" @bind-Value="loginModel.Email" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+
+            <div class="mb-3">
+                <InputText class="input-field" placeholder="Пароль" type="password" @bind-Value="loginModel.Password" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+
+            <button class="btn-auth" type="submit">Увійти</button>
+        </EditForm>
+
+        <p class="redirect-text">
+            Немає акаунту? <a href="/register">Зареєструватися</a>
+        </p>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+
+    private void LoginUser()
+    {
+        // Тут можна перевіряти правильність email/паролю
+        Navigation.NavigateTo("/", true);
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Поле <Email> є обов'язковим")]
+        [EmailAddress(ErrorMessage = "Некоректний формат email")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Поле <Пароль> є обов'язковим")]
+        public string Password { get; set; } = "";
+    }
+}

@@ -1,0 +1,65 @@
+﻿@page "/register"
+@inject NavigationManager Navigation
+
+<link href="lib/bootstrap/dist/css/RegisterPage.css" rel="stylesheet"/>
+
+<div class="d-flex justify-content-center align-items-center vh-100 overflow-hidden"
+     style="background: url('images/background/bgReg1.jpg') no-repeat center center; background-size: cover;">
+    <div class="auth-box">
+        <h3 class="text-center mb-3">Реєстрація</h3>
+
+        <EditForm Model="@registerModel" OnValidSubmit="@HandleRegister">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <InputText class="input-field" placeholder="Ім'я користувача" @bind-Value="registerModel.Username" />
+                <ValidationMessage For="@(() => registerModel.Username)" />
+            </div>
+
+            <div class="mb-3">
+                <InputText class="input-field" type="email" placeholder="Email" @bind-Value="registerModel.Email" />
+                <ValidationMessage For="@(() => registerModel.Email)" />
+            </div>
+
+            <div class="mb-3">
+                <InputText class="input-field" type="password" placeholder="Пароль" @bind-Value="registerModel.Password" />
+                <ValidationMessage For="@(() => registerModel.Password)" />
+            </div>
+
+            <button type="submit" class="btn-auth">Зареєструватися</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="alert alert-success mt-3">@successMessage</div>
+        }
+    </div>
+</div>
+
+@code {
+    private RegisterModel registerModel = new();
+    private string? successMessage;
+
+    private void HandleRegister()
+    {
+        successMessage = "Реєстрація успішна!";
+
+        _ = Task.Delay(1500).ContinueWith(_ =>
+        {
+            InvokeAsync(() => Navigation.NavigateTo("/?registered=true"));
+        });
+    }
+
+    public class RegisterModel
+    {
+        [Required(ErrorMessage = "Поле <Ім'я> є обов'язковим")]
+        public string Username { get; set; } = "";
+
+        [Required(ErrorMessage = "Поле <Email> є обов'язковим")]
+        [EmailAddress(ErrorMessage = "Некоректний формат email")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Поле <Пароль> є обов'язковим")]
+        public string Password { get; set; } = "";
+    }
+}

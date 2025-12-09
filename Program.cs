@@ -53,12 +53,6 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<StoreDbContext>();
     db.Database.Migrate(); // db.Database.EnsureCreated()
 }
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<StoreDbContext>();
-    DbInitializer.Initialize(db);
-}
-
 
 // Маршрути для API контролерів
 app.MapControllers();

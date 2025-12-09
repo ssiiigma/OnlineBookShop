@@ -1,0 +1,47 @@
+.custom-nav {
+    background-color: rgba(0, 0, 0, 0.6); /* напівпрозорий чорний */
+}
+
+.catalog-btn {
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.catalog-btn:hover {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.search-box {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    width: 250px;
+    transition: all 0.3s ease;
+}
+
+.search-box::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-box:focus {
+    background-color: rgba(255, 255, 255, 0.25);
+    outline: none;
+    box-shadow: none;
+    color: white;
+}
+
+.auth-links .nav-link {
+    display: inline;
+    padding: 0;
+    margin: 0 4px;
+}
+
+.auth-links .nav-link:hover {
+    text-decoration: underline;
+}

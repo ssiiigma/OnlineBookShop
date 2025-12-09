@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseRazorSourceGenerator>false</UseRazorSourceGenerator>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
+      <PackageReference Include="NavigationManagerUtils" Version="0.0.2" />
+      <PackageReference Include="Soenneker.Blazor.Layouts.Blank" Version="3.0.47" />
+      <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+      <PackageReference Include="System.Text.Json" Version="9.0.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\images\books\book1.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="wwwroot\images\book1.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="wwwroot\images\background\books_bg.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <!--<ItemGroup>
+      <None Include="wwwroot\lib\bootstrap\dist\css\LoginPage.css" />
+      <None Include="wwwroot\lib\bootstrap\dist\css\RegisterPage.css" />
+    </ItemGroup>-->
+
+</Project>
